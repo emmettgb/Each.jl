@@ -1,5 +1,5 @@
 # Each
-A simple function to iterate over elements in a collection or a single element, even if that single element would normally be iterable by itself. 
+A simple function to iterate over elements in a collection or a single element, even if that single element would normally be iterable by itself. The name is chosen for the mnemonic "for each `a` of Type `T` in `collection`" => `for a in each(T, collection)`
 
 ## Example
 ```julia
