@@ -13,7 +13,7 @@ Return the collection unchanged.
 Return the element wrapped in a tuple.
 
 Useful for functions where the arguments can be a list or a single element which should be
-iterated over, but the elements could be iterable themselves. 
+iterated over, but the elements could be iterable themselves.
 Extra care should be taken when the list and the elements are similar types: When working
 with tuples of tuples of integers, use `each(Tuple{Vararg{Integer}},collection)` rather than
 `each(Tuple,collection)` as the latter will always use the entire list as one element.
@@ -78,7 +78,7 @@ each(::Type{T}, element::T) where T = (element,)
 
 """
 ## @each exp::Expr -> ::Bool
-Determines whether each element of an iterable meets a certain condition. Returns a boolean, true if all of the elements meet a condition, false if otherwise. 
+Determines whether each element of an iterable meets a certain condition. Returns a boolean, true if all of the elements meet a condition, false if otherwise.
 Used in conditional contexts.
 ### example
 ```
@@ -102,11 +102,24 @@ They are!
 ```
 """
 macro each(exp::Expr)
-    strexpr = string(exp)
-    comp = split(strexpr, ' ')
-    for value in eval(Meta.parse(string(comp[1])))
-        to_parse = string(value, " ", comp[2], " ", comp[3])
-        state = eval(Meta.parse(to_parse))
+    x = exp.args[2]
+    xname = ""
+    if contains(string(x), '[')
+        xname = eval(x)
+    else
+        xname = getfield(__module__, Symbol(x))
+    end
+    if length(exp.args) == 2
+        for value in xname
+            state = eval(Meta.parse(string(exp.args[1], "(", value, ")")))
+            if state != true
+                return(false)
+            end
+        end
+    end
+
+    for value in xname
+        state = eval(Meta.parse(string(value," ", exp.args[1], " ", exp.args[3])))
         if state != true
             return(false)
         end
