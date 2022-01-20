@@ -1,0 +1,7 @@
+name = "docs"
+authors = ["David Gustavsson <david.e.gustavsson@gmail.com> and contributors"]
+version = "0.1.0"
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Each = "a463d3bb-408a-45f3-8832-4f25bdc04b78"
+
