@@ -1,7 +1,7 @@
 module Each
+using Base.Meta
 
-
-export each
+export each, @each
 
 """
     each(Type, collection)
@@ -75,5 +75,43 @@ function each(::Type{T}, collection) where T
 end
 
 each(::Type{T}, element::T) where T = (element,)
+
+"""
+## @each exp::Expr -> ::Bool
+Determines whether each element of an iterable meets a certain condition. Returns a boolean, true if all of the elements meet a condition, false if otherwise. 
+Used in conditional contexts.
+### example
+```
+x = [5, 10, 15, 20]
+if @each x % 5 == 0
+   println("They are!")
+end
+
+They are!
+
+if @each x > 25
+    println("They are!")
+end
+
+
+if @each x < 25
+    println("They are!")
+end
+
+They are!
+```
+"""
+macro each(exp::Expr)
+    strexpr = string(exp)
+    comp = split(strexpr, ' ')
+    for value in eval(Meta.parse(string(comp[1])))
+        to_parse = string(value, " ", comp[2], " ", comp[3])
+        state = eval(Meta.parse(to_parse))
+        if state != true
+            return(false)
+        end
+    end
+    return(true)
+end
 
 end # Module
